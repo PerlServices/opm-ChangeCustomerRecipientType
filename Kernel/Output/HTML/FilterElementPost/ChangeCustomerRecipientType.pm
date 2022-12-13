@@ -55,8 +55,6 @@ sub Run {
 sub _AddButtons {
     my ( $Self, %Param ) = @_;
 
-    Kernel::LOG( \%Param );
-
     my $Type    = $Param{Type} || 'To';
     my %Buttons = (
         To  => [ [ 'Cc', 'angle-down'      ], [ 'Bcc', 'angle-double-down'] ],
