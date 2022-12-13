@@ -44,7 +44,7 @@ sub Run {
     return 1 if !$Param{Templates}->{$Templatename};
 
     ${ $Param{Data} } =~ s{
-        <a \s+ href="#" \s+ id="(.{0,3})RemoveCustomerTicket_  .*? </a> \K
+        <a \s+ href="\#" \s+ id="(.{0,3})RemoveCustomerTicket  .*? </a> \K
     }{
         $Self->_AddButtons( Type => $1 );
     }exmsg;
@@ -56,6 +56,26 @@ sub _AddButtons {
     my ( $Self, %Param ) = @_;
 
     Kernel::LOG( \%Param );
+
+    my $Type    = $Param{Type} || 'To';
+    my %Buttons = (
+        To  => [ [ 'Cc', 'angle-down'      ], [ 'Bcc', 'angle-double-down'] ],
+        Cc  => [ [ 'To', 'angle-up'        ], [ 'Bcc', 'angle-down'       ] ],
+        Bcc => [ [ 'To', 'angle-double-up' ], [ 'Cc',  'angle-up'         ] ],
+    );
+
+    my $ButtonsHTML = '';
+    for my $Button ( @{ $Buttons{$Type} || [] } ) {
+        $ButtonsHTML .= sprintf qq~
+            <a href="#" class="ChangeRecipientType" data-to="$Button->[0]" data-from="$Type"
+                id="${Type}ChangeRecipientType" name="${Type}ChangeRecipientType">
+                <i class="fa fa-$Button->[1]"></i>
+                <span class="InvisibleText">$Button->[0]</span>
+            </a>
+        ~;
+    }
+
+    return $ButtonsHTML;
 }
 
 1;

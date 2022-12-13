@@ -18,6 +18,31 @@ var PS = PS || {};
  */
 PS.ChangeCustomerRecipientType = (function (TargetNS) {
     TargetNS.Init = function() {
+        var AddTicketCustomerFunc = Core.Agent.CustomerSearch.AddTicketCustomer;
+
+        Core.Agent.CustomerSearch.AddTicketCustomer = function( Field, CustomerValue, CustomerKey, SetAsTicketCustomer ) {
+            var OrigReturn = AddTicketCustomerFunc( Field, CustomerValue, CustomerKey, SetAsTicketCustomer );
+            
+            $('.ChangeRecipientType').off('click').on('click', function() {
+                var From = $(this).data('from');
+                if ( From === "To" ) {
+                    From = "";
+                }
+
+                var To = $(this).data('to');
+
+                var Counter       = ( $(this).attr('id').split("_") )[1];
+                var CustomerKey = $('#' + From + 'CustomerTicketText_' + Counter).val();
+                var CustomerLogin = $('#' + From + 'CustomerKey_' + Counter).val();
+
+                $('#' + From + 'RemoveCustomerTicket_' + Counter).trigger('click');
+                Core.Agent.CustomerSearch.AddTicketCustomer( To + "Customer", CustomerKey, CustomerLogin, false );
+
+                return false;
+            });
+
+            return OrigReturn;
+        };
     };
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');
