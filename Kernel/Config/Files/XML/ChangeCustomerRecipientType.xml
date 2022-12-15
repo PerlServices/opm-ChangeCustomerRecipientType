@@ -10,7 +10,6 @@
                     <Hash>
                         <Item Key="AgentTicketCompose">1</Item>
                         <Item Key="AgentTicketForward">1</Item>
-                        <Item Key="AgentTicketPhone">1</Item>
                         <Item Key="AgentTicketEmail">1</Item>
                     </Hash>
                 </Item>
