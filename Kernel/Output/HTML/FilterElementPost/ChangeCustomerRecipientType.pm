@@ -43,16 +43,60 @@ sub Run {
     return 1 if !$Templatename;
     return 1 if !$Param{Templates}->{$Templatename};
 
+    my $ButtonType = $ConfigObject->Get('ChangeRecipientType::ButtonType') || '';
+
     ${ $Param{Data} } =~ s{
         <a \s+ href="\#" \s+ id="(.{0,3})RemoveCustomerTicket  .*? </a> \K
     }{
-        $Self->_AddButtons( Type => $1 );
+        $Self->_AddButtons( Type => $1, Buttons => $ButtonType );
     }exmsg;
+
+    if ( $ButtonType eq 'Text' ) {
+        ${ $Param{Data} } =~ s{
+            id=["'](?:Cc|Bcc)?CustomerTicketText(?:_.*?)?["'] \K
+        }{
+            style="width: 60%"
+        }xmsg;
+    }
 
     return 1;
 }
 
 sub _AddButtons {
+    my ( $Self, %Param ) = @_;
+
+    if ( $Param{Buttons} eq 'Text' ) {
+        return $Self->_AddTextButtons( %Param );
+    }
+    else {
+        return $Self->_AddIconButtons( %Param );
+    }
+}
+
+sub _AddTextButtons {
+    my ( $Self, %Param ) = @_;
+
+    my $Type    = $Param{Type} || 'To';
+    my %Buttons = (
+        To  => [ 'Cc', 'Bcc' ],
+        Cc  => [ 'To', 'Bcc' ],
+        Bcc => [ 'To', 'Cc'  ],
+    );
+
+    my $ButtonsHTML = '';
+    for my $Button ( @{ $Buttons{$Type} || [] } ) {
+        $ButtonsHTML .= sprintf qq~
+            <a href="#" class="ChangeRecipientType" data-to="$Button" data-from="$Type"
+                id="${Type}ChangeRecipientType" name="${Type}ChangeRecipientType">
+                &gt; $Button
+            </a>
+        ~;
+    }
+
+    return $ButtonsHTML;
+}
+
+sub _AddIconButtons {
     my ( $Self, %Param ) = @_;
 
     my $Type    = $Param{Type} || 'To';
