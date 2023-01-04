@@ -26,4 +26,15 @@
             </Array>
         </Value>
     </Setting>
+    <Setting Name="ChangeRecipientType::ButtonType" Required="0" Valid="1">
+        <Description Translatable="1">Define which type of buttons should be shown.</Description>
+        <Navigation>Core::ChangeRecipientType</Navigation>
+        <Value>
+           <Item ValueType="Select" SelectedID="Icons">
+                <Item ValueType="Option" Value="Icons">Icons</Item>
+                <Item ValueType="Option" Value="Text">Text</Item>
+            </Item>
+        </Value>
+    </Setting>
+</otrs_config>
 </otrs_config>
